@@ -18,15 +18,11 @@ The model is trained on two input variables — air temperature and solar irradi
 ## Repository Structure
 ML-project/
 
-├── preprocessing.py       # Load raw .dat files, resample to hourly, normalize
+├── data_preprocessing.py       # Load raw .dat files, resample to hourly, normalize
 
 ├── model.py               # FFN model definition (PyTorch)
 
-├── train.py               # Training loop
-
-├── evaluate.py            # Evaluation, plots, ablation study
-
-├── data_hourly.csv    # Preprocessed hourly data (temperature + radiation)
+├── data_processed.csv    # Preprocessed hourly data (temperature + radiation)
 
 ├── scale.pkl          # Fitted MinMaxScaler for inverse transformation
 
@@ -65,8 +61,6 @@ Input:  24 timesteps × 2 variables = 48 values
 → Linear(32 → 1)
 Output: predicted temperature at t+1
 
-Total parameters: **5,249**
-
 ---
 
 ## Training
@@ -81,12 +75,20 @@ Total parameters: **5,249**
 
 ## Results
 
-Evaluation on test data (March–May 2026):
+### Overall model performance
+
+The whole accuracy of the model was analyzed. Therefore the Mean absoulte error (MAE), the mean squared error (MSE) and the root mean square error (RSME) were calculated.
 
 | Metric | Value |
 |---|---|
-| MAE | 0.46 °C |
-| RMSE | 0.62 °C |
+| MAE | 0.49 °C |
+| MSE | 0.42 °C² |
+| RMSE | 0.65 °C |
+
+
+
+The MAE of 0.49°C indicates that the model deviates from the measured temperature by less than 0.5°C on average. The RMSE of 0.65°C is slightly higher, which means there are occasional larger errors that pull the value up — but overall the model performs consistently well.
+
 
 ### Best and worst predicted days
 
@@ -124,15 +126,6 @@ The model was evaluated separately for daytime and nighttime to assess performan
 The performance of the model is better for at night. This could be, due to more stable temperatures and less influence of the solar irradiation variablity during nighttime.  
 
 
-
-### Ablation Study
-
-To assess the contribution of solar radiation as an input variable,  
-an ablation test was conducted: the radiation values in the test set  
-were replaced with random Gaussian noise (same mean and std as the  
-original data). The resulting increase in MAE and RMSE quantifies  
-the importance of radiation for temperature forecasting.
-
 ### Monthly Accuracy Distribution
 
 For each month, the distribution of daily prediction accuracy (percentage of hours with error < 0.5°C) is anaylzed as a histogram with 10% bins and 25th, 50th, and 75th percentile markers.
@@ -143,15 +136,30 @@ For each month, the distribution of daily prediction accuracy (percentage of hou
 | April | 54.2 %         | 62.5 % | 70.8 %          |
 | May   | 41.7 %         | 58.3 % | 64.6 %          |
 
-This shows, that April was the month with the best predicitons, followed by March and May, respectively. 
+
+March shows the most consistent performance with the narrowest spread between the 25th and 75th percentile (8.4%), indicating stable and reliable predictions throughout the month.
+April achieves the same median as March but with a wider spread (16.6%), suggesting higher day-to-day variability — likely due to more dynamic spring weather patterns.
+May has both the lowest median (58.3%) and the widest overall distribution, with some days falling below 20% accuracy. This points to compplexer meteorological conditions in late spring, such as convective events and rapid temperature changes, which are  harder for the model to capture.
+
+
+
+### Ablation Study
+
+Hypothesis: If the model just use measured temperature values and gets as an input randomised irradiation values, the perfomance will be worse, since the knowledge of the model over the reality is less than if there are also the measured irradiation values as an input. 
+
+To assess the contribution of solar radiation as an input variable, an ablation test was conducted: the radiation values in the test set were replaced with random Gaussian noise (same mean and std as the original data).The model was then evaluated on these corrupted inputs without retraining.
+
+| Metric   | Original | Random Radiation | Difference |
+|----------|----------|------------------|------------|
+| MAE (°C) | 0.49     | 1.20             | +0.71      |
+| MSE (°C²)| 0.42     | 2.23             | +1.81      |
+| RMSE (°C)| 0.65     | 1.49             | +0.84      |
+
+
+Replacing the solar radiation with random noise roughly doubles the MAE and increases the MSE by a factor of five. This confirms that the model has learned to meaningfully use radiation as an input feature — without it, prediction accuracy degrades significantly.
+
 
 ---
-
-## Installation
-
-```bash
-pip install -r requirements.txt
-```
 
 **requirements.txt:**
 torch
@@ -168,10 +176,26 @@ matplotlib
 All random seeds are fixed at the top of each script:
 
 ```python
-random.seed(42)
-np.random.seed(42)
-torch.manual_seed(42)
+random.seed(23)
+np.random.seed(23)
+torch.manual_seed(23)
 ```
+
+---
+
+
+
+# Academic context
+This project was developed as the final project for the course *Machine learning for the Earth System (MLESS)* at the University of Cologne.
+
+Instructor: Prof. Dr. Martin Schultz
+
+
+
+## Author
+Simone Bauer
+Master's program: Physics of the earth and atmosphere
+University of Cologne
 
 
 
