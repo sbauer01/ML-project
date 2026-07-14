@@ -19,11 +19,17 @@ The model is trained on two input variables — air temperature and solar irradi
 ML-project/
 
 ├── data_preprocessing.ipynb   # Jupyter notebook: data loading, resampling, normalization
+
 ├── model.ipynb                # Jupyter notebook: model, training, evaluation and results
+
 ├── data_processed.csv         # Preprocessed hourly data (temperature + radiation)
+
 ├── scale.pkl                  # Fitted MinMaxScaler for inverse transformation
+
 ├── requirements.txt
+
 ├── .gitignore
+
 └── README.md
 
 > **Note:** Raw data files are not included in this repository due to file size. See **Data** section below.
