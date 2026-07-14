@@ -26,7 +26,7 @@ ML-project/
 ├── .gitignore
 └── README.md
 
-> **Note:** Raw data files (`data/`) are not included in this repository due to file size. See **Data** section below.
+> **Note:** Raw data files are not included in this repository due to file size. See **Data** section below.
 
 ---
 
@@ -43,11 +43,13 @@ The preprocessing extracts the temperature data and the incoming solar irradiati
 
 Raw files follow the naming convention `YYYYMMDD_msgg10m.dat` and are  organized in the folder structure `data/MM/DD/`.
 
-The data is visible on the DataBrowser of the weather station: https://atmos.meteo.uni-koeln.de/~citystation/dataBrowser/dataBrowser1.html?site=CITYSTATION&date=0&UpperLeft=Temperatur_K%C3%B6ln and can be requested under wetter-station@uni-koeln.de.
+The data is visible on the DataBrowser of the weather station: https://atmos.meteo.uni-koeln.de/~citystation/dataBrowser/dataBrowser1.html?site=CITYSTATION&date=0&UpperLeft=Temperatur_K%C3%B6ln and can be requested under wetter-station@uni-koeln.de. The data comes as raw data in a .dat format. 
 
 
 
 ## Model
+
+As a model, a Feed-forward neural network was chosen due to its simple network architecture. Its structure of fully connected layers allows the model to learn non-linear relationships while remaining computationally lightweight.
 
 ```
 Input:  24 timesteps × 2 variables = 48 values
@@ -179,11 +181,11 @@ pip install -r requirements.txt
 ```
 
 **Dependencies:**
-- torch
-- pandas
-- numpy
-- scikit-learn
-- matplotlib
+- torch==2.12.1
+- pandas==3.0.4
+- numpy==2.5.0
+- scikit-learn==1.9.0
+- matplotlib==3.11.0
 
 
 ---
@@ -199,7 +201,11 @@ torch.manual_seed(23)
 ```
 
 ---
-
+print("torch:", torch.__version__)
+print("pandas:", pandas.__version__)
+print("numpy:", numpy.__version__)
+print("sklearn:", sklearn.__version__)
+print("matplotlib:", matplotlib.__version__)
 
 
 # Academic context
